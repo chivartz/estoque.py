@@ -1,0 +1,162 @@
+[
+    {
+        "timestamp": "2025-04-13 15:12:44",
+        "user": "Guido",
+        "action": "Logout"
+    },
+    {
+        "timestamp": "2025-04-13 15:12:46",
+        "user": "Guido",
+        "action": "Login realizado"
+    },
+    {
+        "timestamp": "2025-04-13 15:12:48",
+        "user": "Guido",
+        "action": "Logout"
+    },
+    {
+        "timestamp": "2025-04-13 15:12:50",
+        "user": "Guido",
+        "action": "Login realizado"
+    },
+    {
+        "timestamp": "2025-04-13 15:12:53",
+        "user": "Guido",
+        "action": "Logout"
+    },
+    {
+        "timestamp": "2025-04-13 15:12:54",
+        "user": "Guido",
+        "action": "Login realizado"
+    },
+    {
+        "timestamp": "2025-04-13 15:13:05",
+        "user": "Guido",
+        "action": "Logout"
+    },
+    {
+        "timestamp": "2025-04-13 15:13:08",
+        "user": "Yuri",
+        "action": "Login realizado"
+    },
+    {
+        "timestamp": "2025-04-13 15:13:20",
+        "user": "Yuri",
+        "action": "Logout"
+    },
+    {
+        "timestamp": "2025-04-13 15:13:21",
+        "user": "Yuri",
+        "action": "Login realizado"
+    },
+    {
+        "timestamp": "2025-04-13 15:13:24",
+        "user": "Yuri",
+        "action": "Logout"
+    },
+    {
+        "timestamp": "2025-04-13 15:13:27",
+        "user": "Denilson",
+        "action": "Login realizado"
+    },
+    {
+        "timestamp": "2025-04-13 15:13:35",
+        "user": "Denilson",
+        "action": "Logout"
+    },
+    {
+        "timestamp": "2025-04-13 15:13:36",
+        "user": "Yuri",
+        "action": "Login realizado"
+    },
+    {
+        "timestamp": "2025-04-13 15:13:57",
+        "user": "Yuri",
+        "action": "Logout"
+    },
+    {
+        "timestamp": "2025-04-13 15:14:00",
+        "user": "Marcelo",
+        "action": "Login realizado"
+    },
+    {
+        "timestamp": "2025-04-13 15:14:46",
+        "user": "Yuri",
+        "action": "Login realizado"
+    },
+    {
+        "timestamp": "2025-04-13 15:16:10",
+        "user": "Yuri",
+        "action": "Logout"
+    },
+    {
+        "timestamp": "2025-04-13 15:16:11",
+        "user": "Yuri",
+        "action": "Login realizado"
+    },
+    {
+        "timestamp": "2025-04-13 15:16:23",
+        "user": "Yuri",
+        "action": "Logout"
+    },
+    {
+        "timestamp": "2025-04-13 15:16:25",
+        "user": "Marcelo",
+        "action": "Login realizado"
+    },
+    {
+        "timestamp": "2025-04-13 15:20:19",
+        "user": "Marcelo",
+        "action": "Transferiu 1 de Bomba Ulka 110V para subestoque 'Yuri'"
+    },
+    {
+        "timestamp": "2025-04-13 15:44:37",
+        "user": "Marcelo",
+        "action": "Logout"
+    },
+    {
+        "timestamp": "2025-04-13 15:44:40",
+        "user": "Yuri",
+        "action": "Login realizado"
+    },
+    {
+        "timestamp": "2025-04-13 15:44:48",
+        "user": "Yuri",
+        "action": "Login realizado"
+    },
+    {
+        "timestamp": "2025-04-13 16:00:08",
+        "user": "Yuri",
+        "action": "Novo chamado #1 para a"
+    },
+    {
+        "timestamp": "2025-04-13 16:00:40",
+        "user": "Yuri",
+        "action": "Criou cliente 'Teste'"
+    },
+    {
+        "timestamp": "2025-04-13 16:00:53",
+        "user": "Yuri",
+        "action": "Novo chamado #2 para teste"
+    },
+    {
+        "timestamp": "2025-04-13 16:00:59",
+        "user": "Yuri",
+        "action": "Chamado #2 → Resolvido"
+    },
+    {
+        "timestamp": "2025-04-13 16:04:14",
+        "user": "Yuri",
+        "action": "Logout"
+    },
+    {
+        "timestamp": "2025-04-13 16:04:18",
+        "user": "Yuri",
+        "action": "Login realizado"
+    },
+    {
+        "timestamp": "2025-04-13 16:11:21",
+        "user": "Yuri",
+        "action": "Chamado #1 → Aguardando Peça"
+    }
+]

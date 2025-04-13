@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Administração - i9 Café Estoque</title>
+  <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    /* Estilos básicos e responsividade */
+    body {
+      background: #fafafa;
+      color: #2d2d2d;
+      font-family: "Segoe UI", Arial, sans-serif;
+      margin: 0;
+      padding-bottom: 60px;
+    }
+    header {
+      background: #343a40;
+      color: #fff;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    header div:first-child {
+      display: flex;
+      align-items: center;
+    }
+    header img {
+      width: 40px;
+      margin-right: 10px;
+    }
+    header a, header button {
+      background: #fff;
+      color: #343a40;
+      padding: 8px 12px;
+      border: 1px solid #343a40;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      margin: 5px;
+      transition: transform 0.12s, box-shadow 0.12s;
+      cursor: pointer;
+    }
+    header a:hover, header button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    }
+    main {
+      padding: 20px;
+      max-width: 1100px;
+      margin: 80px auto 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    /* Botão para criar novo usuário */
+    .create-btn {
+      display: block;
+      width: 220px;
+      margin: 0 auto 20px;
+      background: #343a40;
+      color: #fff;
+      border: none;
+      padding: 12px;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .create-btn:hover {
+      background: #222222;
+    }
+    /* Layout para as listagens */
+    .container {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
+    .column {
+      flex: 1;
+      min-width: 300px;
+      max-width: 500px;
+      background: #fff;
+      border: 1px solid #dcdcdc;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .column h2 {
+      background: #f2f2f2;
+      margin: 0;
+      padding: 10px;
+      text-align: center;
+      font-size: 16px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow-x: auto;
+    }
+    th, td {
+      padding: 10px;
+      text-align: center;
+      border-bottom: 1px solid #dcdcdc;
+      font-size: 14px;
+    }
+    thead {
+      background: #f2f2f2;
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+    .no-data {
+      text-align: center;
+      font-style: italic;
+      color: #666;
+    }
+    /* Modais */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal {
+      background: #fff;
+      padding: 20px 30px;
+      border-radius: 8px;
+      max-width: 400px;
+      width: 90%;
+      display: none;
+    }
+    .modal h2 {
+      margin-bottom: 15px;
+      text-align: center;
+      color: #343a40;
+    }
+    .modal form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .modal input[type="text"],
+    .modal input[type="password"],
+    .modal select {
+      padding: 10px;
+      border: 1px solid #dcdcdc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .modal .modal-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+    .modal .modal-buttons button {
+      flex: 1;
+      padding: 10px;
+      border-radius: 4px;
+      margin: 0 5px;
+      transition: background 0.2s;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .modal .modal-buttons button:first-child {
+      background: #343a40;
+      color: #fff;
+    }
+    .modal .modal-buttons button:first-child:hover {
+      background: #222222;
+    }
+    .modal .modal-buttons button:last-child {
+      background: #ccc;
+      color: #343a40;
+    }
+    .modal .modal-buttons button:last-child:hover {
+      background: #bdbdbd;
+    }
+    /* Rodapé */
+    footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: #343a40;
+      color: #fff;
+      text-align: center;
+      line-height: 60px;
+    }
+    footer a {
+      color: #fff;
+      text-decoration: none;
+    }
+    /* Responsividade */
+    @media (max-width: 600px) {
+      header { flex-direction: column; text-align: center; }
+      .container { flex-direction: column; }
+      .column { max-width: 100%; }
+      table, th, td { font-size: 13px; padding: 8px; }
+      .create-btn { width: 100%; font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Cabeçalho -->
+  <header>
+    <div>
+      <img src="{{ url_for('static', filename='coffee_logo.png') }}" alt="Logo">
+      <span>i9 Café - Administração</span>
+    </div>
+    <div>
+      <a href="{{ url_for('dashboard') }}">Dashboard</a>
+    </div>
+  </header>
+
+  <!-- Conteúdo Principal -->
+  <main>
+    <h1>Gerenciamento de Usuários e Subestoques</h1>
+    <!-- Botão único para criar novo usuário (abre modal) -->
+    <button class="create-btn" onclick="openModal('createUserModal')">Criar Novo Usuário</button>
+    
+    <div class="container">
+      <!-- Coluna de Usuários -->
+      <div class="column">
+        <h2>Usuários Cadastrados</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Login</th>
+              <th>Cargo</th>
+              <th>Subestoque</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if all_users and all_users|length > 0 %}
+              {% for user in all_users %}
+                <tr>
+                  <td>{{ user.username }}</td>
+                  <td>{{ user.role }}</td>
+                  <td>
+                    {% if user.sub_id %}
+                      {{ user.sub_nome }} (ID: {{ user.sub_id }})
+                    {% else %}
+                      -
+                    {% endif %}
+                  </td>
+                  <td>
+                    <!-- Chama a função JavaScript para abrir o modal de edição -->
+                    <a href="javascript:void(0);" onclick="openEditModal('{{ user.username }}', '{{ user.role }}', '{{ user.sub_id|default('') }}', '{{ user.sub_nome|default('') }}')">Editar</a>
+                    {% if user.username|lower != session.username|lower %}
+                      <a href="{{ url_for('delete_user', username=user.username) }}" onclick="return confirm('Deseja excluir o usuário {{ user.username }}?');">Excluir</a>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td colspan="4" class="no-data">Nenhum usuário cadastrado.</td>
+              </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Coluna de Subestoques -->
+      <div class="column">
+        <h2>Subestoques Cadastrados</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nome</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if subinventories and subinventories|length > 0 %}
+              {% for sub in subinventories %}
+                <tr>
+                  <td>{{ sub.id }}</td>
+                  <td>{{ sub.nome }}</td>
+                  <td>
+                    <a href="{{ url_for('subinventory_detail', sub_id=sub.id) }}">Detalhar</a>
+                    <a href="{{ url_for('delete_subinventory', sub_id=sub.id) }}" onclick="return confirm('Deseja excluir o subestoque {{ sub.nome }}?');">Excluir</a>
+                  </td>
+                </tr>
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td colspan="3" class="no-data">Nenhum subestoque cadastrado.</td>
+              </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal de Criação de Novo Usuário -->
+  <div id="modalOverlay" class="modal-overlay">
+    <!-- Modal de Criação -->
+    <div id="createUserModal" class="modal">
+      <h2>Criar Novo Usuário</h2>
+      <form action="{{ url_for('create_user') }}" method="post">
+        <input type="text" name="username" placeholder="Login" required>
+        <input type="password" name="password" placeholder="Senha" required>
+        <select name="role" id="roleSelect" required onchange="toggleStockField()">
+          <option value="">Selecione o Cargo</option>
+          <option value="nv1">nv1 (Técnico)</option>
+          <option value="nv2">nv2 (Técnico+)</option>
+          <option value="nv3">nv3 (Gerente)</option>
+        </select>
+        <!-- Checkbox para opcionalmente criar subestoque -->
+        <label style="font-size: 14px; margin-top: 5px;">
+          <input type="checkbox" id="createStockChk" name="create_stock" onchange="toggleStockField()"> Criar subestoque para este usuário
+        </label>
+        <!-- Campo para inserir nome do subestoque (aparecerá se o checkbox estiver marcado) -->
+        <div id="stockField" style="display:none;">
+          <input type="text" name="sub_nome" placeholder="Nome do Sub-Estoque (opcional)">
+        </div>
+        <div class="modal-buttons">
+          <button type="submit">Criar</button>
+          <button type="button" onclick="closeModal('createUserModal')">Cancelar</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Modal de Edição de Usuário -->
+    <div id="editUserModal" class="modal">
+      <h2>Editar Usuário</h2>
+      <form id="editUserForm" method="post" action="">
+        <!-- Campo Login; pode ser editável ou read-only se preferir -->
+        <input type="text" name="username" id="editUsername" placeholder="Login" required>
+        <input type="password" name="password" placeholder="Nova Senha (opcional)">
+        <select name="role" id="editRole" required onchange="toggleEditStockField()">
+          <option value="">Selecione o Cargo</option>
+          <option value="nv1">nv1 (Técnico)</option>
+          <option value="nv2">nv2 (Técnico+)</option>
+          <option value="nv3">nv3 (Gerente)</option>
+        </select>
+        <!-- Campos para editar dados de subestoque (aparecem se cargo for nv1 ou nv2) -->
+        <div id="editStockField" style="display:none;">
+          <input type="text" name="sub_id" id="editSubId" placeholder="ID do Sub-Estoque">
+          <input type="text" name="sub_nome" id="editSubNome" placeholder="Nome do Sub-Estoque">
+        </div>
+        <div class="modal-buttons">
+          <button type="submit">Atualizar</button>
+          <button type="button" onclick="closeModal('editUserModal')">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Rodapé -->
+  <footer>
+    © 2025 - Desenvolvido por <a href="https://github.com/chivartz" target="_blank">Yuri Schwartz</a>
+  </footer>
+
+  <script>
+    // Função para exibir ou esconder o campo de subestoque no modal de criação
+    function toggleStockField() {
+      var chk = document.getElementById("createStockChk").checked;
+      if(chk) {
+        document.getElementById("stockField").style.display = "block";
+      } else {
+        document.getElementById("stockField").style.display = "none";
+      }
+    }
+    // Função para exibir ou esconder os campos de subestoque no modal de edição
+    function toggleEditStockField() {
+      var role = document.getElementById("editRole").value;
+      if(role === "nv1" || role === "nv2") {
+        document.getElementById("editStockField").style.display = "block";
+      } else {
+        document.getElementById("editStockField").style.display = "none";
+        document.getElementById("editSubId").value = "";
+        document.getElementById("editSubNome").value = "";
+      }
+    }
+    // Abre um modal (utilizado tanto para criação quanto para edição)
+    function openModal(modalId) {
+      document.getElementById("modalOverlay").style.display = "flex";
+      document.getElementById(modalId).style.display = "block";
+    }
+    // Fecha um modal; se nenhum estiver aberto, oculta o overlay
+    function closeModal(modalId) {
+      document.getElementById(modalId).style.display = "none";
+      var modals = document.querySelectorAll('.modal');
+      var algumAberto = Array.from(modals).some(function(modal) {
+        return window.getComputedStyle(modal).display !== 'none';
+      });
+      if (!algumAberto) {
+        document.getElementById("modalOverlay").style.display = "none";
+      }
+    }
+    // Fecha o modal se clicar fora dele
+    window.onclick = function(event) {
+      var overlay = document.getElementById("modalOverlay");
+      if (event.target == overlay) {
+        closeModal('createUserModal');
+        closeModal('editUserModal');
+      }
+    }
+    // Abre o modal de edição e popula os campos com os dados do usuário
+    function openEditModal(username, role, sub_id, sub_nome) {
+      document.getElementById("editUsername").value = username;
+      document.getElementById("editRole").value = role;
+      // Se o cargo for nv1 ou nv2 e houver dados de subestoque, mostra os campos
+      if ((role === "nv1" || role === "nv2") && sub_id) {
+        document.getElementById("editStockField").style.display = "block";
+        document.getElementById("editSubId").value = sub_id;
+        document.getElementById("editSubNome").value = sub_nome;
+      } else {
+        document.getElementById("editStockField").style.display = "none";
+        document.getElementById("editSubId").value = "";
+        document.getElementById("editSubNome").value = "";
+      }
+      // Define a action do formulário para a rota /edit_user/<username>
+      document.getElementById("editUserForm").action = "/edit_user/" + username;
+      openModal('editUserModal');
+    }
+  </script>
+</body>
+</html>

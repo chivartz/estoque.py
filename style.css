@@ -1,0 +1,219 @@
+/* =========================================================
+   PALETA PASTEL  ───────────────────────────────────────────
+   Primária.............. #343a40   (vermelho suave)
+   Primária‑dark......... #222222
+   Texto principal....... #2d2d2d
+   Fundo.................. #fafafa
+   Borda cinza............ #dcdcdc
+   Cabeçalho tabela....... #f2f2f2
+   Linha ferramenta....... #f8f9fb
+   Hover linha............ #f7f7f7
+   Alerta................. #c0392b
+   Alerta‑light........... #fdecea
+   ========================================================= */
+
+/* RESET & BASE */
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI",Arial,sans-serif}
+body{background:#fafafa;color:#2d2d2d}
+a{color:inherit;text-decoration:none}
+a:hover{text-decoration:underline}
+button{cursor:pointer;border:none;outline:none}
+
+/* ---------- TOPBAR ---------- */
+.topbar{
+  background:#343a40;color:#fff;
+  padding:12px 20px;display:flex;align-items:center;justify-content:space-between;
+  box-shadow:0 1px 4px rgba(0,0,0,.12)
+}
+.topbar-left{display:flex;align-items:center}
+.topbar-logo{width:40px;margin-right:10px}
+.topbar-title{font-size:20px;font-weight:600}
+.button-bar{display:flex;gap:8px;align-items:center}
+
+/* Botões padrão */
+.menu-btn{
+  padding:9px 16px;background:#fff;color:#343a40;
+  border:1px solid #343a40;border-radius:6px;font-size:14px;font-weight:600;
+  transition:transform .12s,box-shadow .12s
+}
+.menu-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 3px 8px rgba(0,0,0,.15)
+}
+
+/* Botão logout */
+.logout-btn{
+  background:#c0392b;border-color:#c0392b;color:#fff
+}
+.logout-btn:hover{
+  background:#a93226;border-color:#a93226;
+  transform:translateY(-2px);
+  box-shadow:0 3px 8px rgba(192,57,43,.35)
+}
+
+/* ---------- SUBHEADER ---------- */
+.subheader{
+  background:#343a40;color:#fff;
+  padding:10px 20px;display:flex;align-items:center;gap:10px;
+  box-shadow:0 1px 4px rgba(0,0,0,.12)
+}
+.subheader .back-btn{
+  background:#fff;color:#343a40;
+  padding:7px 12px;border:1px solid #343a40;border-radius:4px;font-size:14px;
+  transition:background .2s,transform .1s
+}
+.subheader .back-btn:hover{background:#f1f1f1;transform:translateY(-2px)}
+
+/* ---------- LOGIN ---------- */
+.login-body{
+  background:#fafafa;min-height:100vh;display:flex;flex-direction:column;
+  justify-content:center;align-items:center
+}
+.login-container{width:100%;max-width:400px;padding:20px}
+.login-card{
+  background:#fff;padding:40px;border-radius:8px;
+  box-shadow:0 3px 12px rgba(0,0,0,.1);text-align:center
+}
+.login-logo{width:80px;margin-bottom:15px}
+.login-card h2{margin-bottom:20px;color:#343a40}
+.login-form .form-group{text-align:left;margin-bottom:15px}
+.login-form label{display:block;font-size:14px;margin-bottom:5px;color:#555}
+.login-form input{
+  width:100%;padding:12px;border:1px solid #dcdcdc;border-radius:4px
+}
+.btn-primary{
+  width:100%;padding:12px;background:#343a40;color:#fff;font-size:16px;
+  margin-top:10px;border-radius:4px;transition:background .2s
+}
+.btn-primary:hover{background:#222222}
+.forgot-link{display:inline-block;margin-top:10px;font-size:14px;color:#666}
+
+/* ---------- SEARCH BAR ---------- */
+.search-container{
+  background:#fff;padding:10px 20px;box-shadow:0 1px 3px rgba(0,0,0,.06)
+}
+.search-wrapper{display:flex;align-items:center;gap:10px}
+.search-wrapper input[type="text"]{
+  flex:1;padding:11px;font-size:15px;border:1px solid #dcdcdc;border-radius:4px;
+  transition:border-color .2s,box-shadow .2s
+}
+.search-wrapper input[type="text"]:focus{
+  border-color:#343a40;box-shadow:0 0 0 3px rgba(201,97,98,.25)
+}
+.search-wrapper button{
+  background:#343a40;color:#fff;padding:11px 18px;font-size:15px;border-radius:4px;
+  transition:background .2s,transform .1s
+}
+.search-wrapper button:hover{background:#222222;transform:translateY(-2px)}
+.checkbox-label{display:inline-flex;align-items:center;gap:5px;font-size:15px}
+
+/* ---------- TABLES ---------- */
+table{width:100%;border-collapse:collapse;margin-top:10px;background:#fff;}
+th,td{padding:8px;text-align:center;border-bottom:4px solid #ededed ;table-layout: fixed; width: 10%;}
+thead{box-shadow:0 1px 3px rgba(0,0,0,.04)}
+th{background:#f2f2f2;color:#2d2d2d;font-weight:600}
+tr.critical{background:#fdecea !important;color:#c0392b;font-weight:600}
+tr.ferramenta{background:#f8f9fb}
+tbody tr:hover{background:#f7f7f7}
+
+/* ---------- CONTENT ---------- */
+.content{padding:20px}
+
+/* ---------- CARDS ---------- */
+.card{
+  background:#fff;padding:20px;border-radius:8px;
+  box-shadow:0 3px 10px rgba(0,0,0,.08);margin-bottom:20px
+}
+
+/* ---------- DASHBOARD CARDS ---------- */
+.dashboard-grid{display:flex;flex-wrap:wrap;gap:20px;margin-top:20px;justify-content:center}
+.dashboard-card{
+  background:#fff;border-radius:8px;box-shadow:0 3px 10px rgba(0,0,0,.06);
+  padding:20px;flex:1;min-width:250px;max-width:300px;text-align:center;
+  transition:transform .18s,box-shadow .18s
+}
+.dashboard-card:hover{
+  transform:translateY(-4px);box-shadow:0 6px 16px rgba(0,0,0,.1)
+}
+.dashboard-card h3{margin-bottom:8px;color:#343a40;font-size:18px}
+.dashboard-card p{font-size:15px;margin-bottom:14px}
+.dashboard-card a{
+  display:block;background:#343a40;color:#fff;padding:9px 0;border-radius:4px;
+  font-weight:600;text-transform:uppercase;font-size:14px;
+  transition:background .2s,transform .1s
+}
+.dashboard-card a:hover{background:#222222;transform:translateY(-2px)}
+
+/* ---------- FORM CARDS ---------- */
+.form-card{
+  background:#fff;padding:20px;border-radius:8px;
+  box-shadow:0 3px 10px rgba(0,0,0,.08);max-width:420px;margin:20px auto
+}
+.form-card label{display:block;margin-bottom:5px;font-weight:600;color:#2d2d2d}
+.form-card input,.form-card select{
+  width:100%;padding:10px;border:1px solid #dcdcdc;border-radius:4px;margin-bottom:14px
+}
+
+/* ---------- MODAIS ---------- */
+.modal-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);
+  backdrop-filter:blur(4px);animation:fadeIn .25s forwards;z-index:1000
+}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+.modal{
+  background:#fff;padding:28px;border-radius:10px;width:90%;max-width:500px;
+  margin:110px auto;box-shadow:0 8px 18px rgba(0,0,0,.15);
+  transform:translateY(-18px);opacity:0;animation:pop .3s forwards
+}
+@keyframes pop{to{transform:translateY(0);opacity:1}}
+.modal h2{font-size:20px;margin-bottom:18px;text-align:center;color:#343a40}
+.modal form{display:flex;flex-direction:column;gap:14px}
+.modal input,.modal select{
+  padding:11px;font-size:15px;border:1px solid #dcdcdc;border-radius:6px;
+  transition:border-color .2s,box-shadow .2s
+}
+.modal input:focus,.modal select:focus{
+  border-color:#343a40;box-shadow:0 0 0 3px rgba(201,97,98,.25)
+}
+.modal .modal-buttons{display:flex;justify-content:space-between;margin-top:18px}
+.modal .modal-buttons button{
+  flex:1;padding:11px;font-size:15px;border-radius:6px;margin:0 5px;
+  transition:background .2s,transform .1s
+}
+.modal .modal-buttons button:first-child{background:#343a40;color:#fff}
+.modal .modal-buttons button:first-child:hover{background:#222222;transform:translateY(-2px)}
+.modal .modal-buttons button:last-child{background:#ccc;color:#2d2d2d}
+.modal .modal-buttons button:last-child:hover{background:#bdbdbd}
+
+/* ---------- TOOLTIP ---------- */
+[data-tooltip]{position:relative}
+[data-tooltip]::after{
+  content:attr(data-tooltip);position:absolute;left:50%;top:-36px;transform:translateX(-50%);
+  background:#2d2d2d;color:#fff;padding:6px 10px;font-size:12px;border-radius:4px;
+  opacity:0;pointer-events:none;transition:opacity .2s;white-space:nowrap;z-index:2000
+}
+[data-tooltip]:hover::after{opacity:1}
+
+/* ---------- FOOTER ---------- */
+.footer,.footer-login{
+  background:#2d2d2d;color:#ccc;font-size:12px;padding:6px 20px;text-align:center;
+  border-top:1px solid #3a3a3a;position:fixed;bottom:0;width:100%
+}
+.footer a,.footer-login a{color:#ccc;text-decoration:underline}
+
+/* ---------- RESPONSIVO ---------- */
+@media(max-width:600px){
+  .hamburger{display:block;font-size:28px;color:#fff;padding:10px;cursor:pointer}
+  .nav-buttons{display:none}
+  .side-nav{
+    height:100%;width:0;position:fixed;z-index:1100;top:0;left:0;
+    background:#2d2d2d;overflow-x:hidden;transition:.5s;padding-top:60px
+  }
+  .side-nav a{padding:10px 15px;font-size:20px;color:#fff;display:block;transition:.3s}
+  .side-nav a:hover{color:#f1f1f1}
+  .side-nav .closebtn{font-size:36px}
+  body{font-size:16px}
+  .topbar-title{font-size:18px}
+}
+

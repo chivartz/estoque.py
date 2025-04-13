@@ -1,0 +1,20 @@
+[
+    {
+        "id": 1,
+        "cliente": "a",
+        "maquina": "a",
+        "data": "2025-04-13",
+        "hora": "16:00",
+        "status": "Aguardando Peça",
+        "data_resolvido": ""
+    },
+    {
+        "id": 2,
+        "cliente": "teste",
+        "maquina": "Solista",
+        "data": "2025-04-13",
+        "hora": "16:00",
+        "status": "Resolvido",
+        "data_resolvido": "2025-04-13 16:00"
+    }
+]

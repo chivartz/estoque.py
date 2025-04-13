@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Detalhe do Subestoque - i9 Café Estoque</title>
+  <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-left">
+      <img src="{{ url_for('static', filename='coffee_logo.png') }}" alt="Logo" class="topbar-logo">
+      <span class="topbar-title">i9 Café - Detalhe do Subestoque</span>
+    </div>
+    <div class="button-bar">
+      <a class="menu-btn" href="{{ url_for('dashboard') }}">Voltar</a>
+    </div>
+  </header>
+  <div class="content">
+    <h2>Subestoque: {{ subinventory.nome }}</h2>
+    <h3>Itens</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>Nome</th>
+          <th>Tipo</th>
+          <th>Quantidade</th>
+          <th>Fabricante</th>
+          <th>Voltagem</th>
+          <th>Nível Crítico</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in subinventory.itens %}
+        <tr {% if item.nivel_critico and item.quantidade <= item.nivel_critico %}class="critical"{% endif %}>
+          <td>{{ item.codigo }}</td>
+          <td>{{ item.nome }}</td>
+          <td>{{ item.tipo }}</td>
+          <td>{{ item.quantidade }}</td>
+          <td>{{ item.fabricante or "-" }}</td>
+          <td>{{ item.voltagem or "-" }}</td>
+          <td>{{ item.nivel_critico if item.nivel_critico else "-" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <footer class="footer">© 2025 • <span>•</span> Desenvolvido por <a href="https://github.com/chivartz" target="_blank">Yuri Schwartz</a></footer>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

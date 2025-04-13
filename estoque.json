@@ -1,0 +1,137 @@
+[
+    {
+        "codigo": "00000002",
+        "nome": "Bomba Ulka 220V",
+        "tipo": "Peças Novas",
+        "quantidade": 2,
+        "fabricante": "",
+        "voltagem": "220v",
+        "nivel_critico": 2
+    },
+    {
+        "codigo": "00000003",
+        "nome": "Bomba Ulka 110V",
+        "tipo": "Peças Novas",
+        "quantidade": 3,
+        "fabricante": "",
+        "voltagem": "110v",
+        "nivel_critico": 2
+    },
+    {
+        "codigo": "00000004",
+        "nome": "Pressostato La Cimbali",
+        "tipo": "Peças Novas",
+        "quantidade": 4,
+        "fabricante": "La Cimbali",
+        "voltagem": "",
+        "nivel_critico": 2
+    },
+    {
+        "codigo": "00000005",
+        "nome": "Resistência 1200W",
+        "tipo": "Peças Novas",
+        "quantidade": 3,
+        "fabricante": "Faema",
+        "voltagem": "220v",
+        "nivel_critico": 1
+    },
+    {
+        "codigo": "00000007",
+        "nome": "Carvão do Grupo Lirika",
+        "tipo": "Peças Novas",
+        "quantidade": 5,
+        "fabricante": "Saeco",
+        "voltagem": "",
+        "nivel_critico": 3
+    },
+    {
+        "codigo": "00000008",
+        "nome": "Sensor de Água",
+        "tipo": "Peças Usadas",
+        "quantidade": 4,
+        "fabricante": "Saeco",
+        "voltagem": "220v",
+        "nivel_critico": 2
+    },
+    {
+        "codigo": "00000009",
+        "nome": "Suporte Moedeiro e Noteiro",
+        "tipo": "Peças Novas",
+        "quantidade": 9,
+        "fabricante": "TCN",
+        "voltagem": "",
+        "nivel_critico": 3
+    },
+    {
+        "codigo": "00000010",
+        "nome": "Multímetro Digital",
+        "tipo": "Ferramentas",
+        "quantidade": 2,
+        "fabricante": "Exbom",
+        "voltagem": "",
+        "nivel_critico": 1
+    },
+    {
+        "codigo": "00000011",
+        "nome": "Chave Torx T10",
+        "tipo": "Ferramentas",
+        "quantidade": 3,
+        "fabricante": "Tramontina",
+        "voltagem": "",
+        "nivel_critico": 1
+    },
+    {
+        "codigo": "00000012",
+        "nome": "Alicate Bico Fino",
+        "tipo": "Ferramentas",
+        "quantidade": 5,
+        "fabricante": "Gedore",
+        "voltagem": "",
+        "nivel_critico": 2
+    },
+    {
+        "codigo": "00000013",
+        "nome": "Chave Philips",
+        "tipo": "Ferramentas",
+        "quantidade": 4,
+        "fabricante": "Stanley",
+        "voltagem": "",
+        "nivel_critico": 1
+    },
+    {
+        "codigo": "00000014",
+        "nome": "Kit O-Ring Grupo Saeco",
+        "tipo": "Peças Novas",
+        "quantidade": 7,
+        "fabricante": "Evoca",
+        "voltagem": "",
+        "nivel_critico": 2
+    },
+    {
+        "codigo": "00000015",
+        "nome": "Cabo de Alimentação",
+        "tipo": "Peças Novas",
+        "quantidade": 12,
+        "fabricante": "Philips",
+        "voltagem": "",
+        "nivel_critico": 5
+    },
+    {
+        "codigo": "00000016",
+        "nome": "Resistência 1200W",
+        "tipo": "Peças Usadas",
+        "quantidade": 1,
+        "fabricante": "",
+        "voltagem": "",
+        "nivel_critico": null
+    },
+    {
+        "codigo": "00000017",
+        "nome": "Chave Inglesa PICA",
+        "tipo": "Ferramentas",
+        "quantidade": 2,
+        "fabricante": "",
+        "voltagem": "",
+        "nivel_critico": 2
+    }
+]

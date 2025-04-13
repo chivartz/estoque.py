@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Logs do Sistema - i9 Café</title>
+  <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-left">
+      <img src="{{ url_for('static', filename='coffee_logo.png') }}" alt="Logo" class="topbar-logo">
+      <span class="topbar-title">Logs do Sistema</span>
+    </div>
+    <div class="button-bar">
+      <a class="menu-btn" href="{{ url_for('dashboard') }}">Voltar para Dashboard</a>
+      <a class="menu-btn logout-btn" href="{{ url_for('logout') }}">Sair</a>
+    </div>
+  </header>
+
+  <div class="content">
+    <h2>Histórico de Ações</h2>
+    
+    <form method="get" action="{{ url_for('logs') }}">
+      <input type="text" name="filtro" placeholder="Filtrar por ação (ex.: estoque, login, usuário)" value="{{ filtro }}">
+      <button type="submit">Filtrar</button>
+    </form>
+    
+    <table>
+      <thead>
+        <tr>
+          <th>Data/Hora</th>
+          <th>Usuário</th>
+          <th>Ação</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in logs %}
+        <tr>
+          <td>{{ log.timestamp }}</td>
+          <td>{{ log.user }}</td>
+          <td>{{ log.action }}</td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="3">Nenhum log encontrado.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <footer class="footer">© 2025 • Desenvolvido por <a href="https://github.com/chivartz" target="_blank">Yuri Schwartz</a></footer>
+</body>
+</html>

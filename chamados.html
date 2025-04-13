@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chamados - i9 Café Estoque</title>
+  <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}">
+  <!-- Link para o style.css na pasta static -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    /* ==============================
+       Estilos Específicos para Chamados
+       ============================== */
+    /* Abas de navegação */
+    .tab-nav {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px 0;
+    }
+    .tab-nav button {
+      padding: 8px 16px;
+      border: 1px solid #343a40;
+      background: #fff;
+      color: #343a40;
+      border-radius: 4px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .tab-nav button.active,
+    .tab-nav button:hover {
+      background: #343a40;
+      color: #fff;
+    }
+    /* Conteúdo das abas */
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    /* Tabelas de chamados */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      padding: 8px;
+      text-align: center;
+      border-bottom: 1px solid #dcdcdc;
+      font-size: 14px;
+    }
+    th {
+      background: #f2f2f2;
+      font-weight: 600;
+    }
+    .no-data {
+      text-align: center;
+      padding: 12px;
+      font-style: italic;
+      color: #666;
+    }
+    th.select-col, td.select-col {
+      width: 40px;
+    }
+    /* Coluna Prioridade */
+    th.prioridade-col, td.prioridade-col {
+      width: 100px;
+    }
+    /* Botão de exportação */
+    .export-btn {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      background: #343a40;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-size: 16px;
+    }
+    .export-btn:hover {
+      background: #222222;
+    }
+  </style>
+</head>
+<body>
+  <!-- Cabeçalho -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <img src="{{ url_for('static', filename='coffee_logo.png') }}" alt="Logo" class="topbar-logo">
+      <span class="topbar-title">Chamados - i9 Café Estoque</span>
+    </div>
+    <div class="button-bar">
+      <a class="menu-btn" href="{{ url_for('dashboard') }}">🏠 Dashboard</a>
+      <a class="menu-btn" href="{{ url_for('logout') }}">Sair</a>
+    </div>
+  </header>
+
+  <!-- Conteúdo Principal -->
+  <div class="content">
+    <h2 class="page-title">Gerenciamento de Chamados</h2>
+    
+    <!-- Botão Exportar PDF (apenas para nv2 e nv3) -->
+    {% if session.role != 'nv1' %}
+    <div style="text-align: center; margin-bottom: 20px;">
+      <!-- Inclua um campo oculto para contexto "chamados" -->
+      <button class="export-btn" onclick="openExportModal()">Exportar PDF</button>
+    </div>
+    {% endif %}
+    
+    <!-- Abas de Chamados -->
+    <div class="tab-nav">
+      <button type="button" class="tab-btn active" data-tab="pendentesTab">Pendentes</button>
+      <button type="button" class="tab-btn" data-tab="resolvidosTab">Resolvidos</button>
+    </div>
+    
+    <!-- Aba: Pendentes -->
+    <div id="pendentesTab" class="tab-content active">
+      {% if pendentes and pendentes|length > 0 %}
+      <table>
+        <thead>
+          <tr>
+            {% if session.role != 'nv1' %}
+            <th class="select-col"><input type="checkbox" id="selectAllPendentes" onchange="toggleSelectAll(this, 'pendentes')"></th>
+            {% else %}
+            <th class="select-col"></th>
+            {% endif %}
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>Máquina</th>
+            <th>Data</th>
+            <th>Hora</th>
+            <th class="prioridade-col">Prioridade</th>
+            <th>Status</th>
+            <th>Ação</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for chamado in pendentes %}
+          <tr>
+            {% if session.role != 'nv1' %}
+            <td class="select-col">
+              <input type="checkbox" name="chamado_ids" value="{{ chamado.id }}" class="checkbox-pendentes">
+            </td>
+            {% else %}
+            <td class="select-col"></td>
+            {% endif %}
+            <td>{{ chamado.id }}</td>
+            <td>{{ chamado.cliente }}</td>
+            <td>{{ chamado.maquina }}</td>
+            <td>{{ chamado.data }}</td>
+            <td>{{ chamado.hora }}</td>
+            <td class="prioridade-col">{{ chamado.prioridade or '' }}</td>
+            <td>{{ chamado.status }}</td>
+            <td>
+              {% if session.role != 'nv1' %}
+              <button type="button" class="action-btn" onclick="openUpdateModal({{ chamado.id }}, '{{ chamado.status }}', '{{ chamado.prioridade }}')">Atualizar</button>
+              {% else %}
+              -
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+        <div class="no-data">Nenhum chamado pendente.</div>
+      {% endif %}
+    </div>
+    
+    <!-- Aba: Resolvidos -->
+    <div id="resolvidosTab" class="tab-content">
+      {% if resolvidos and resolvidos|length > 0 %}
+      <table>
+        <thead>
+          <tr>
+            {% if session.role != 'nv1' %}
+            <th class="select-col"><input type="checkbox" id="selectAllResolvidos" onchange="toggleSelectAll(this, 'resolvidos')"></th>
+            {% else %}
+            <th class="select-col"></th>
+            {% endif %}
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>Máquina</th>
+            <th>Data</th>
+            <th>Hora</th>
+            <th class="prioridade-col">Prioridade</th>
+            <th>Status</th>
+            <th>Data Resolvido</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for chamado in resolvidos %}
+          <tr>
+            {% if session.role != 'nv1' %}
+            <td class="select-col">
+              <input type="checkbox" name="chamado_ids" value="{{ chamado.id }}" class="checkbox-resolvidos">
+            </td>
+            {% else %}
+            <td class="select-col"></td>
+            {% endif %}
+            <td>{{ chamado.id }}</td>
+            <td>{{ chamado.cliente }}</td>
+            <td>{{ chamado.maquina }}</td>
+            <td>{{ chamado.data }}</td>
+            <td>{{ chamado.hora }}</td>
+            <td class="prioridade-col">{{ chamado.prioridade or '' }}</td>
+            <td>{{ chamado.status }}</td>
+            <td>{{ chamado.data_resolvido }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+        <div class="no-data">Nenhum chamado resolvido.</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Modais e Overlay -->
+  <div id="modalOverlay" class="modal-overlay">
+    <!-- Modal: Novo Chamado -->
+    <div id="novoChamadoModal" class="modal">
+      <h2>Novo Chamado</h2>
+      <form action="{{ url_for('add_chamado') }}" method="post">
+        <input type="text" name="cliente" placeholder="Cliente" required>
+        <input type="text" name="maquina" placeholder="Máquina" required>
+        <input type="date" name="data" value="{{ current_date }}" required>
+        <input type="time" name="hora" value="{{ current_time }}" required>
+        <!-- Novo campo Prioridade -->
+        <select name="prioridade" required>
+          <option value="">Selecione a Prioridade</option>
+          <option value="Alta">Alta</option>
+          <option value="Média">Média</option>
+          <option value="Baixa">Baixa</option>
+        </select>
+        <select name="status" required>
+          <option value="">Selecione o Status</option>
+          <option value="Aberto">Aberto</option>
+          <option value="Aguardando Peça">Aguardando Peça</option>
+          <option value="Outro">Outro</option>
+          <option value="Resolvido">Resolvido</option>
+        </select>
+        <div class="modal-buttons">
+          <button type="submit">Registrar</button>
+          <button type="button" onclick="closeModal('novoChamadoModal')">Cancelar</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Modal: Exportar PDF -->
+    <div id="exportModal" class="modal">
+      <h2>Exportar Chamados em PDF</h2>
+      <!-- Neste modal, um campo oculto indica o contexto de exportação -->
+      <form id="exportForm" action="{{ url_for('export_pdf') }}" method="post">
+        <input type="hidden" name="export_context" value="chamados">
+        <p>Selecione os chamados para exportar:</p>
+        <label>
+          <input type="checkbox" id="selectAllExport" onchange="toggleSelectAllExport(this)"> Marcar Todos
+        </label>
+        <div id="exportModalContainer" class="export-list" style="max-height:260px; overflow:auto; margin-top:10px;">
+          <!-- Este conteúdo será preenchido dinamicamente com os checkboxes da aba ativa -->
+        </div>
+        <div class="modal-buttons">
+          <button type="submit">Exportar PDF</button>
+          <button type="button" onclick="closeModal('exportModal')">Cancelar</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Modal: Atualizar Chamado -->
+    <div id="updateChamadoModal" class="modal">
+      <h2>Atualizar Chamado</h2>
+      <form id="updateChamadoForm" action="" method="post">
+        <label for="novo_status">Novo Status:</label>
+        <select name="novo_status" id="novo_status" required>
+          <option value="">Selecione o Status</option>
+          <option value="Aberto">Aberto</option>
+          <option value="Aguardando Peça">Aguardando Peça</option>
+          <option value="Outro">Outro</option>
+          <option value="Resolvido">Resolvido</option>
+        </select>
+        <label for="novo_prioridade">Prioridade:</label>
+        <select name="novo_prioridade" id="novo_prioridade" required>
+          <option value="">Selecione a Prioridade</option>
+          <option value="Alta">Alta</option>
+          <option value="Média">Média</option>
+          <option value="Baixa">Baixa</option>
+        </select>
+        <div class="modal-buttons">
+          <button type="submit">Atualizar</button>
+          <button type="button" onclick="closeModal('updateChamadoModal')">Cancelar</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Modal: Novo Cliente -->
+    <div id="novoClienteModal" class="modal">
+      <h2>Novo Cliente</h2>
+      <form action="{{ url_for('create_cliente') }}" method="post">
+        <input type="text" name="nome" placeholder="Nome do Cliente" required>
+        <input type="text" name="regiao" placeholder="Região" list="regionList" required>
+        <datalist id="regionList">
+          <option value="Cabo Frio">
+          <option value="Araruama">
+          <option value="Arraial do Cabo">
+          <option value="Búzios">
+          <option value="Saquarema">
+          <option value="São Pedro da Aldeia">
+          <option value="Rio das Ostras">
+          <option value="Mangaratiba">
+          <option value="Itaboraí">
+          <option value="Maricá">
+          <option value="Nova Friburgo">
+          <option value="Petrópolis">
+          <option value="Volta Redonda">
+          <option value="Barra Mansa">
+        </datalist>
+        <div id="maquinasClienteContainer">
+          <div class="machine-group">
+            <label>Máquina 1:</label>
+            <input type="text" name="maquinas[]" placeholder="Descrição da Máquina" required>
+          </div>
+        </div>
+        <button type="button" onclick="adicionarMaquinaCliente()">Adicionar Outra Máquina</button>
+        <div class="modal-buttons">
+          <button type="submit">Registrar Cliente</button>
+          <button type="button" onclick="closeModal('novoClienteModal')">Cancelar</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Modal: Transferir Item -->
+    <div id="transferModal" class="modal">
+      <h2>Transferir para Subestoque</h2>
+      <form action="{{ url_for('transfer_inventory') }}" method="post">
+        <select name="codigo" required>
+          <option value="">Selecione o item</option>
+          {% for item in stock %}
+            <option value="{{ item.codigo }}">{{ item.codigo }} - {{ item.nome }}</option>
+          {% endfor %}
+        </select>
+        <select name="subestoque_id" required>
+          <option value="">Selecione o Subestoque</option>
+          {% for sub in subinventories %}
+            <option value="{{ sub.id }}">{{ sub.nome }}</option>
+          {% endfor %}
+        </select>
+        <input type="number" name="quantidade" placeholder="Quantidade" required min="1">
+        <div class="modal-buttons">
+          <button type="submit">Transferir</button>
+          <button type="button" onclick="closeModal('transferModal')">Cancelar</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Modal: Editar Usuário -->
+    <div id="editUserModal" class="modal">
+      <h2>Editar Usuário</h2>
+      <form id="editUserForm" method="post" action="">
+        <input type="text" name="username" id="editUsername" placeholder="Login" readonly required>
+        <input type="password" name="password" placeholder="Nova Senha (opcional)">
+        <select name="role" id="editRole" required onchange="toggleEditStockField()">
+          <option value="">Selecione o Cargo</option>
+          <option value="nv1">nv1 (Técnico)</option>
+          <option value="nv2">nv2 (Técnico+)</option>
+          <option value="nv3">nv3 (Gerente)</option>
+        </select>
+        <div id="editStockField" style="display:none;">
+          <input type="text" name="sub_id" id="editSubId" placeholder="ID do Sub-Estoque">
+          <input type="text" name="sub_nome" id="editSubNome" placeholder="Nome do Sub-Estoque">
+        </div>
+        <div class="modal-buttons">
+          <button type="submit">Atualizar</button>
+          <button type="button" onclick="closeModal('editUserModal')">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Rodapé -->
+  <footer class="footer">
+    © 2025 • Desenvolvido por <a href="https://github.com/chivartz" target="_blank">Yuri Schwartz</a>
+  </footer>
+
+  <!-- Scripts Inline -->
+  <script>
+    // Abre um modal e exibe o overlay
+    function openModal(modalId) {
+      document.querySelectorAll('.modal').forEach(function(modal) {
+        modal.style.display = 'none';
+      });
+      document.getElementById('modalOverlay').style.display = 'flex';
+      document.getElementById(modalId).style.display = 'block';
+    }
+    // Fecha um modal; se nenhum estiver aberto, oculta o overlay
+    function closeModal(modalId) {
+      document.getElementById(modalId).style.display = 'none';
+      var modals = document.querySelectorAll('.modal');
+      var algumAberto = Array.from(modals).some(function(modal) {
+        return window.getComputedStyle(modal).display !== 'none';
+      });
+      if (!algumAberto) {
+        document.getElementById('modalOverlay').style.display = 'none';
+      }
+    }
+    window.onclick = function(event) {
+      var overlay = document.getElementById('modalOverlay');
+      if (event.target == overlay) {
+        closeModal('novoChamadoModal');
+        closeModal('novoClienteModal');
+        closeModal('transferModal');
+        closeModal('exportModal');
+        closeModal('updateChamadoModal');
+        closeModal('editUserModal');
+      }
+    };
+
+    // Função para selecionar ou desmarcar todas as checkboxes no modal de exportação
+    function toggleSelectAllExport(masterCheckbox) {
+      var exportContainer = document.querySelector(".export-list");
+      var checkboxes = exportContainer.querySelectorAll("input[type='checkbox']");
+      checkboxes.forEach(function(checkbox) {
+        checkbox.checked = masterCheckbox.checked;
+      });
+    }
+
+    // Função para abrir o modal de exportação e preencher o container com os chamados da aba ativa
+    function openExportModal() {
+      var activeTab = document.querySelector(".tab-content.active");
+      if (!activeTab) {
+        alert("Nenhuma aba ativa encontrada!");
+        return;
+      }
+      var checkboxes = activeTab.querySelectorAll("input[type='checkbox'][name='chamado_ids']");
+      var container = document.getElementById("exportModalContainer");
+      container.innerHTML = "";
+      if (checkboxes.length === 0) {
+        container.innerHTML = "<p class='no-data'>Nenhum chamado disponível para exportação nesta aba.</p>";
+      } else {
+        checkboxes.forEach(function(cb) {
+          var newCb = cb.cloneNode(true);
+          var tr = cb.closest("tr");
+          var id = tr.cells[1].textContent.trim();
+          var cliente = tr.cells[2].textContent.trim();
+          var label = document.createElement("label");
+          label.style.display = "block";
+          label.appendChild(newCb);
+          label.appendChild(document.createTextNode(" Chamado " + id + " - " + cliente));
+          container.appendChild(label);
+        });
+      }
+      openModal("exportModal");
+    }
+
+    // Alterna abas
+    document.addEventListener("DOMContentLoaded", function() {
+      var tabButtons = document.querySelectorAll(".tab-btn");
+      tabButtons.forEach(function(btn) {
+        btn.addEventListener("click", function() {
+          tabButtons.forEach(function(b) { b.classList.remove("active"); });
+          this.classList.add("active");
+          var tabContents = document.querySelectorAll(".tab-content");
+          tabContents.forEach(function(tab) { tab.classList.remove("active"); });
+          var tabName = this.getAttribute("data-tab");
+          document.getElementById(tabName).classList.add("active");
+        });
+      });
+    });
+
+    // Função para abrir o modal de atualização do chamado e preencher os campos (status e prioridade)
+    function openUpdateModal(chamadoId, statusAtual, prioridadeAtual) {
+      document.getElementById("updateChamadoForm").action = "/update_chamado_status/" + chamadoId;
+      document.getElementById("novo_status").value = statusAtual;
+      document.getElementById("novo_prioridade").value = prioridadeAtual || "";
+      openModal('updateChamadoModal');
+    }
+
+    // Função para abrir o modal de edição de usuário e preencher os campos
+    function openEditModal(username, role, sub_id, sub_nome) {
+      document.getElementById("editUsername").value = username;
+      document.getElementById("editRole").value = role;
+      if ((role === "nv1" || role === "nv2") && sub_id) {
+        document.getElementById("editStockField").style.display = "block";
+        document.getElementById("editSubId").value = sub_id;
+        document.getElementById("editSubNome").value = sub_nome;
+      } else {
+        document.getElementById("editStockField").style.display = "none";
+        document.getElementById("editSubId").value = "";
+        document.getElementById("editSubNome").value = "";
+      }
+      document.getElementById("editUserForm").action = "/edit_user/" + username;
+      openModal('editUserModal');
+    }
+
+    // Função para adicionar novo campo de máquina no modal de novo cliente
+    function adicionarMaquinaCliente() {
+      var container = document.getElementById("maquinasClienteContainer");
+      var count = container.querySelectorAll(".machine-group").length + 1;
+      var div = document.createElement("div");
+      div.className = "machine-group";
+      var label = document.createElement("label");
+      label.textContent = "Máquina " + count + ":";
+      var input = document.createElement("input");
+      input.type = "text";
+      input.name = "maquinas[]";
+      input.placeholder = "Descrição da Máquina";
+      input.required = true;
+      div.appendChild(label);
+      div.appendChild(input);
+      container.appendChild(div);
+    }
+  </script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

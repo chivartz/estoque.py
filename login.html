@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login - Painel Técnico</title>
+  <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="login-body">
+  <div class="login-container">
+    <div class="login-card">
+      <img src="{{ url_for('static', filename='coffee_logo.png') }}" alt="Logomarca" class="login-logo">
+      <h2>Painel Técnico</h2>
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <div class="flash flash-error">
+            {% for msg in messages %}
+              <p>{{ msg }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+      <form method="post" class="login-form">
+        <div class="form-group">
+          <label for="username">Usuário</label>
+          <input type="text" name="username" id="username" placeholder="Seu usuário" required maxlength="30">
+        </div>
+        <div class="form-group">
+          <label for="password">Senha</label>
+          <input type="password" name="password" id="password" placeholder="Sua senha" required>
+        </div>
+        <p><a href="/reset-password" class="forgot-password-link">Esqueceu a senha?</a></p>
+        <button type="submit" class="btn-primary">Entrar</button>
+      </form>
+    </div>
+  </div>
+  <footer class="footer-login">© 2025 • Desenvolvido por <a href="https://github.com/chivartz" target="_blank">Yuri Schwartz</a></footer>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

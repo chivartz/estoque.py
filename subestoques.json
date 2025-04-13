@@ -1,0 +1,47 @@
+[
+    {
+        "id": "0001",
+        "nome": "Yuri",
+        "itens": [
+            {
+                "codigo": "00000003",
+                "nome": "Bomba Ulka 110V",
+                "tipo": "Peças Novas",
+                "quantidade": 1,
+                "fabricante": "",
+                "voltagem": "110v",
+                "nivel_critico": 2
+            }
+        ]
+    },
+    {
+        "id": "0002",
+        "nome": "Guido",
+        "itens": []
+    },
+    {
+        "id": "0003",
+        "nome": "Oficina",
+        "itens": []
+    },
+    {
+        "id": "0004",
+        "nome": "Marcelo",
+        "itens": []
+    },
+    {
+        "id": "0005",
+        "nome": "Wallace",
+        "itens": []
+    },
+    {
+        "id": "0006",
+        "nome": "Denilson",
+        "itens": []
+    },
+    {
+        "id": "0007",
+        "nome": "Ruddy",
+        "itens": []
+    }
+]

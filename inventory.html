@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>
+    {% if session.role == 'nv1' %}
+      Meu Estoque
+    {% else %}
+      Estoque Técnico - Peças e Ferramentas
+    {% endif %}
+  </title>
+  <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <!-- Cabeçalho fixo + scroll‑snap -->
+  <style>
+    .table-head, .table-body {
+      width: 100%;
+      border-collapse: collapse;
+      border-spacing: 0;
+    }
+    .table-head th {
+      background: #f2f2f2;
+      color: #2d2d2d;
+      font-weight: 600;
+      padding: 11px;
+      text-align: center;
+      border-bottom: 2px solid #dcdcdc;
+    }
+    #tableContainer {
+      max-height: 400px;
+      overflow-y: auto;
+      scroll-snap-type: y mandatory;
+      scroll-behavior: smooth;
+    }
+    #tableContainer tbody tr {
+      scroll-snap-align: start;
+    }
+  </style>
+  <script>
+    // O objeto stockData é populado com os dados vindos do back-end
+    var stockData = {{ stock|tojson|safe }};
+    // Atualizado: se o usuário for Técnico, role nv1; caso contrário, nv2 ou nv3
+    var sessionRole = "{{ session.role }}";
+  </script>
+</head>
+<body>
+  <!-- ───── TOPBAR ───── -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <img src="{{ url_for('static', filename='coffee_logo.png') }}" alt="Logo" class="topbar-logo">
+      <span class="topbar-title">
+        {% if session.role == 'nv1' %}
+          Meu Estoque - {{ subinventory_nome }}
+        {% else %}
+          Estoque Técnico - Peças e Ferramentas
+        {% endif %}
+      </span>
+    </div>
+    <div class="button-bar">
+      {# Apenas usuários que não são nv1 (Técnico) podem realizar ações como adicionar itens #}
+      {% if session.role != 'nv1' %}
+        <button class="menu-btn" onclick="openModal('addModal')">🆕 Novo Item</button>
+        <button class="menu-btn" onclick="openModal('withdrawModal')">📤 Retirar Item</button>
+        <button class="menu-btn" onclick="openModal('transferModal')">🔀 Transferir Item</button>
+        <button class="menu-btn" onclick="openModal('exportModal')">📄 Exportar PDF</button>
+      {% endif %}
+      <a class="menu-btn" href="{{ url_for('dashboard') }}">🏠 Voltar ao Dashboard</a>
+    </div>
+  </header>
+
+  <!-- ───── PESQUISA ───── -->
+  <div class="search-container">
+    <form class="search-box" method="get">
+      <div class="search-wrapper">
+        <input type="text" name="search" placeholder="Pesquisar por nome, código, fabricante ou tipo..."
+               maxlength="50" value="{{ request.args.get('search', '') }}">
+        <label class="checkbox-label">
+          <input type="checkbox" name="critico" value="1" onchange="this.form.submit();"
+                 {% if request.args.get('critico') == '1' %}checked{% endif %}>
+          <span>Itens Críticos</span>
+        </label>
+        <button type="submit">Buscar 🔍</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ───── CONTEÚDO ───── -->
+  <div class="content">
+    {% if session.role == 'nv1' %}
+      <h2>Estoque - {{ subinventory_nome }}</h2>
+    {% endif %}
+
+    <!-- Cabeçalho fixo da tabela -->
+    <table class="table-head">
+      <thead>
+        <tr>
+          <th>🆔 Código</th>
+          <th>📝 Nome</th>
+          <th>📦 Tipo</th>
+          <th>🔢 Quantidade</th>
+          <th>🏭 Fabricante</th>
+          <th>⚡ Voltagem/Amperagem</th>
+          <th>🚨 Nível Crítico</th>
+          {% if session.role != 'nv1' %}
+            <th>⚙️ Ações</th>
+          {% endif %}
+        </tr>
+      </thead>
+    </table>
+
+    <!-- Corpo rolável da tabela (será preenchido via JavaScript) -->
+    <div id="tableContainer">
+      <table class="table-body">
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ───── MODAIS ───── -->
+  <div id="modalOverlay" class="modal-overlay">
+    <!-- Modal: Adicionar Item -->
+    <div id="addModal" class="modal" style="margin-top:50px;">
+      <h2>Adicionar Item 💾</h2>
+      <form action="{{ url_for('add_inventory') }}" method="post">
+        <input type="text" name="nome" placeholder="Nome do item" list="nome_suggestions" required maxlength="50">
+        <datalist id="nome_suggestions">
+          {% for suggestion in suggestions %}
+            <option value="{{ suggestion }}">
+          {% endfor %}
+        </datalist>
+        <select name="tipo" required>
+          <option value="">Selecione o tipo</option>
+          <option value="Peças Novas">Peças Novas</option>
+          <option value="Peças Usadas">Peças Usadas</option>
+          <option value="Ferramentas">Ferramentas</option>
+        </select>
+        <input type="number" name="quantidade" placeholder="Quantidade" required min="1">
+        <input type="text" name="fabricante" placeholder="Fabricante (opcional)"
+               list="fabricante_datalist" maxlength="50">
+        <datalist id="fabricante_datalist">
+          <option value="Evoca"><option value="Rheavendors"><option value="TCN">
+          <option value="Philips"><option value="Saeco"><option value="La Marzocco">
+          <option value="La Cimbali"><option value="Nuova Simonelli"><option value="Faema">
+          <option value="ECM"><option value="Rocket Espresso"><option value="Victoria Arduino">
+          <option value="Rancilio"><option value="De'Longhi"><option value="Jura">
+          <option value="QAB"><option value="Breville"><option value="Krups">
+          <option value="Miele"><option value="Bosch"><option value="Cuisinart">
+          <option value="Tchibo"><option value="Gaggia"><option value="Smeg">
+          <option value="Bialetti"><option value="La Pavoni"><option value="N&W">
+          <option value="Fiorenzato"><option value="Wega"><option value="Mokita">
+          <option value="Hamilton Beach">
+        </datalist>
+        <input type="text" name="voltagem" placeholder="Voltagem / Amperagem (opcional)"
+               maxlength="20" list="voltagem_datalist">
+        <datalist id="voltagem_datalist">
+          <option value="220v"><option value="127v"><option value="24v">
+          <option value="12v"><option value="2A"><option value="3A"><option value="10A">
+        </datalist>
+        <input type="number" name="nivel_critico" placeholder="Nível Crítico (opcional)" min="0">
+        <div class="modal-buttons">
+          <button type="submit">Adicionar</button>
+          <button type="button" onclick="closeModal('addModal')">Cancelar</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Modal: Retirar Item -->
+    <div id="withdrawModal" class="modal">
+      <h2>Retirar Item 📤</h2>
+      <form action="{{ url_for('withdraw_inventory') }}" method="post">
+        <select name="codigo" required>
+          <option value="">Selecione o item</option>
+          {% for item in stock %}
+            <option value="{{ item.codigo }}">{{ item.codigo }} - {{ item.nome }}</option>
+          {% endfor %}
+        </select>
+        <input type="number" name="quantidade" placeholder="Quantidade" required min="1">
+        <div class="modal-buttons">
+          <button type="submit">Retirar</button>
+          <button type="button" onclick="closeModal('withdrawModal')">Cancelar</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Modal: Transferir Item -->
+    <div id="transferModal" class="modal">
+      <h2>Transferir para Subestoque 🔀</h2>
+      <form action="{{ url_for('transfer_inventory') }}" method="post">
+        <select name="codigo" required>
+          <option value="">Selecione o item</option>
+          {% for item in stock %}
+            <option value="{{ item.codigo }}">{{ item.codigo }} - {{ item.nome }}</option>
+          {% endfor %}
+        </select>
+        <!-- Atualizado: listando subestoques usando subinventories -->
+        <select name="subestoque_id" required>
+          <option value="">Selecione o Subestoque</option>
+          {% for sub in subinventories %}
+            <option value="{{ sub.id }}">{{ sub.nome }}</option>
+          {% endfor %}
+        </select>
+        <input type="number" name="quantidade" placeholder="Quantidade" required min="1">
+        <div class="modal-buttons">
+          <button type="submit">Transferir</button>
+          <button type="button" onclick="closeModal('transferModal')">Cancelar</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Modal: Exportar PDF -->
+    <div id="exportModal" class="modal">
+      <h2>Exportar Itens</h2>
+      <form id="exportForm" action="{{ url_for('export_pdf') }}" method="post">
+        <p>Marque os itens para exportar:</p>
+        <!-- Checkbox para marcar todos -->
+        <label>
+          <input type="checkbox" id="selectAllExport" onchange="toggleSelectAllExport(this)"> Marcar Todos
+        </label>
+        <div class="export-list" style="max-height:260px; overflow:auto;">
+          {% for item in stock %}
+            <label>
+              <input type="checkbox" name="codigos" value="{{ item.codigo }}">
+              {{ item.codigo }} - {{ item.nome }}
+            </label><br>
+          {% endfor %}
+        </div>
+        <div class="modal-buttons">
+          <button type="submit">Exportar PDF</button>
+          <button type="button" onclick="closeModal('exportModal')">Cancelar</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Modal: Editar Usuário -->
+    <div id="editUserModal" class="modal">
+      <h2>Editar Usuário</h2>
+      <form id="editUserForm" method="post" action="">
+        <input type="text" name="username" id="editUsername" placeholder="Login" readonly required>
+        <input type="password" name="password" placeholder="Nova Senha (opcional)">
+        <select name="role" id="editRole" required onchange="toggleEditStockField()">
+          <option value="">Selecione o Cargo</option>
+          <option value="nv1">nv1 (Técnico)</option>
+          <option value="nv2">nv2 (Técnico+)</option>
+          <option value="nv3">nv3 (Gerente)</option>
+        </select>
+        <!-- Campos para editar os dados de subestoque (se cargo for nv1 ou nv2) -->
+        <div id="editStockField" style="display:none;">
+          <input type="text" name="sub_id" id="editSubId" placeholder="ID do Sub-Estoque">
+          <input type="text" name="sub_nome" id="editSubNome" placeholder="Nome do Sub-Estoque">
+        </div>
+        <div class="modal-buttons">
+          <button type="submit">Atualizar</button>
+          <button type="button" onclick="closeModal('editUserModal')">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ───── FOOTER ───── -->
+  <footer class="footer">
+    © 2025 • Desenvolvido por <a href="https://github.com/chivartz" target="_blank">Yuri Schwartz</a>
+  </footer>
+
+  <!-- Script para controle de modais e funcionalidades -->
+  <script>
+    // Abre um modal e exibe o overlay
+    function openModal(modalId) {
+      document.querySelectorAll('.modal').forEach(function(modal) {
+        modal.style.display = 'none';
+      });
+      document.getElementById('modalOverlay').style.display = 'flex';
+      document.getElementById(modalId).style.display = 'block';
+    }
+    // Fecha um modal e oculta o overlay se nenhum estiver aberto
+    function closeModal(modalId) {
+      document.getElementById(modalId).style.display = 'none';
+      var modals = document.querySelectorAll('.modal');
+      var algumAberto = Array.from(modals).some(function(modal) {
+        return window.getComputedStyle(modal).display !== 'none';
+      });
+      if (!algumAberto) {
+        document.getElementById('modalOverlay').style.display = 'none';
+      }
+    }
+    window.onclick = function(event) {
+      var overlay = document.getElementById('modalOverlay');
+      if (event.target == overlay) {
+        closeModal('addModal');
+        closeModal('withdrawModal');
+        closeModal('transferModal');
+        closeModal('exportModal');
+        closeModal('editUserModal');
+      }
+    }
+    // Função para selecionar ou desmarcar todas as checkboxes no modal de exportação
+    function toggleSelectAllExport(masterCheckbox) {
+      var exportContainer = document.querySelector(".export-list");
+      var checkboxes = exportContainer.querySelectorAll("input[type='checkbox']");
+      checkboxes.forEach(function(checkbox) {
+        checkbox.checked = masterCheckbox.checked;
+      });
+    }
+    // Função para alternar a exibição do campo de subestoque no modal de criação
+    function toggleStockField() {
+      var chk = document.getElementById("createStockChk").checked;
+      if (chk) {
+        document.getElementById("stockField").style.display = "block";
+      } else {
+        document.getElementById("stockField").style.display = "none";
+      }
+    }
+    // Função para alternar a exibição dos campos de subestoque no modal de edição
+    function toggleEditStockField() {
+      var role = document.getElementById("editRole").value;
+      if (role === "nv1" || role === "nv2") {
+        document.getElementById("editStockField").style.display = "block";
+      } else {
+        document.getElementById("editStockField").style.display = "none";
+        document.getElementById("editSubId").value = "";
+        document.getElementById("editSubNome").value = "";
+      }
+    }
+    // Função para abrir o modal de edição de usuário e preencher os campos
+    function openEditModal(username, role, sub_id, sub_nome) {
+      document.getElementById("editUsername").value = username;
+      document.getElementById("editRole").value = role;
+      if ((role === "nv1" || role === "nv2") && sub_id) {
+        document.getElementById("editStockField").style.display = "block";
+        document.getElementById("editSubId").value = sub_id;
+        document.getElementById("editSubNome").value = sub_nome;
+      } else {
+        document.getElementById("editStockField").style.display = "none";
+        document.getElementById("editSubId").value = "";
+        document.getElementById("editSubNome").value = "";
+      }
+      document.getElementById("editUserForm").action = "/edit_user/" + username;
+      openModal('editUserModal');
+    }
+    // Exemplo de função para preencher a tabela com stockData (caso seja necessário)
+    function preencherTabela() {
+      var tbody = document.getElementById('tableBody');
+      tbody.innerHTML = "";
+      stockData.forEach(function(item) {
+        var tr = document.createElement('tr');
+        tr.innerHTML = "<td>" + item.codigo + "</td>" +
+                       "<td>" + item.nome + "</td>" +
+                       "<td>" + item.tipo + "</td>" +
+                       "<td>" + item.quantidade + "</td>" +
+                       "<td>" + (item.fabricante || "") + "</td>" +
+                       "<td>" + (item.voltagem || "") + "</td>" +
+                       "<td>" + (item.nivel_critico != null ? item.nivel_critico : "") + "</td>";
+        if (sessionRole !== "nv1") {
+          var acaoTd = document.createElement('td');
+          acaoTd.innerHTML = '<a href="#" onclick="alert(\'Editar item não implementado\'); return false;">Editar</a> ' +
+                             '<a href="#" onclick="alert(\'Excluir item não implementado\'); return false;">Excluir</a>';
+          tr.appendChild(acaoTd);
+        }
+        tbody.appendChild(tr);
+      });
+    }
+    // Chamada para preencher a tabela ao carregar a página
+    preencherTabela();
+  </script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
